@@ -17,9 +17,7 @@ wrap content = docTypeHtml $ do
     js "js/jquery.min.js"
     js "js/crafty-min.js"
     js "js/bootstrap.js"
-    js "js/coffee-script.js"
-    js "js/test.js"
-    script ! src "js/game.coffee" ! type_ "text/coffeescript" $ mempty
+    js "js/game.js"
   body $ do
     nav
     div !. "content container-fluid" $ do
