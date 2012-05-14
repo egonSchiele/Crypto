@@ -17,6 +17,7 @@ wrap content = docTypeHtml $ do
     js "js/jquery.min.js"
     js "js/crafty-min.js"
     js "js/bootstrap.js"
+    js "js/game-components.js"
     js "js/game.js"
   body $ do
     nav

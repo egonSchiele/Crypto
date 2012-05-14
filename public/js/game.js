@@ -48,50 +48,6 @@
           }
         }
       }
-      Crafty.c("LeftControls", {
-        init: function() {
-          return this.requires("Multiway");
-        },
-        leftControls: function(speed) {
-          this.multiway(speed, {
-            W: -90,
-            S: 90,
-            D: 0,
-            A: 180
-          });
-          return this;
-        }
-      });
-      Crafty.c("MultiwayAnim", {
-        init: function() {
-          this.bind("NewDirection", function(direction) {
-            if (direction.x < 0) {
-              if (!this.isPlaying("walk_left")) {
-                this.stop().animate("walk_left", 10, -1);
-              }
-            }
-            if (direction.x > 0) {
-              if (!this.isPlaying("walk_right")) {
-                this.stop().animate("walk_right", 10, -1);
-              }
-            }
-            if (direction.y < 0) {
-              if (!this.isPlaying("walk_up")) {
-                this.stop().animate("walk_up", 10, -1);
-              }
-            }
-            if (direction.y > 0) {
-              if (!this.isPlaying("walk_down")) {
-                this.stop().animate("walk_down", 10, -1);
-              }
-            }
-            if (!direction.x && !direction.y) {
-              return this.stop();
-            }
-          });
-          return this;
-        }
-      });
       Crafty.c("Hero", {
         Hero: function() {
           this.requires("SpriteAnimation, Collision, Animate, MultiwayAnim").animate("walk_left", 6, 3, 8).animate("walk_right", 9, 3, 11).animate("walk_up", 3, 3, 5).animate("walk_down", 0, 3, 2);
