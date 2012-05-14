@@ -1,68 +1,113 @@
 (function() {
 
   window.onload = function() {
-    Crafty.init(600, 300);
-    Crafty.background('rgb(127,127,127)');
-    Crafty.e("Paddle, 2D, DOM, Color, Multiway").color('rgb(255,0,0)').attr({
-      x: 20,
-      y: 100,
-      w: 10,
-      h: 100
-    }).multiway(4, {
-      W: -90,
-      S: 90
+    var HEIGHT, TILESIZE, WIDTH, generateWorld, isEdgeTile, rand;
+    rand = Crafty.math.randomInt;
+    TILESIZE = 16;
+    WIDTH = 20;
+    HEIGHT = 16;
+    Crafty.init(WIDTH * TILESIZE, HEIGHT * TILESIZE);
+    Crafty.canvas.init();
+    Crafty.scene("main", function() {
+      return generateWorld();
     });
-    Crafty.e("Paddle, 2D, DOM, Color, Multiway").color('rgb(0,255,0)').attr({
-      x: 580,
-      y: 100,
-      w: 10,
-      h: 100
-    }).multiway(4, {
-      UP_ARROW: -90,
-      DOWN_ARROW: 90
+    Crafty.sprite(TILESIZE, "img/sprites.png", {
+      grass1: [0, 0],
+      grass2: [1, 0],
+      grass3: [2, 0],
+      grass4: [3, 0],
+      flower: [0, 1],
+      bush1: [0, 2],
+      bush2: [1, 2],
+      player: [0, 3]
     });
-    Crafty.e("2D, DOM, Color, Collision").color('rgb(0,0,255)').attr({
-      x: 300,
-      y: 150,
-      w: 10,
-      h: 10,
-      dX: Crafty.math.randomInt(2, 5),
-      dY: Crafty.math.randomInt(2, 5)
-    }).bind('EnterFrame', function() {
-      if (this.y <= 0 || this.y >= 290) {
-        this.dY *= -1;
+    generateWorld = function() {
+      var f, grassType, i, j, player1, _i, _j;
+      for (i = _i = 0; 0 <= WIDTH ? _i <= WIDTH : _i >= WIDTH; i = 0 <= WIDTH ? ++_i : --_i) {
+        for (j = _j = 0; 0 <= HEIGHT ? _j <= HEIGHT : _j >= HEIGHT; j = 0 <= HEIGHT ? ++_j : --_j) {
+          grassType = rand(1, 4);
+          Crafty.e("2D, Canvas, grass" + grassType).attr({
+            x: i * TILESIZE,
+            y: j * TILESIZE,
+            z: 1
+          });
+          if (isEdgeTile(i, j)) {
+            Crafty.e("2D, Canvas, solid, bush" + rand(1, 2)).attr({
+              x: i * TILESIZE,
+              y: j * TILESIZE,
+              z: 2
+            });
+          } else if (rand(0, 5) > 3) {
+            f = Crafty.e("2D, Canvas, flower, solid, SpriteAnimation, explodable").attr({
+              x: i * TILESIZE,
+              y: j * TILESIZE,
+              z: 1000
+            }).bind('explode', function() {
+              return this.destroy();
+            });
+          }
+        }
       }
-      if (this.x > 600) {
-        this.x = 300;
-        Crafty("LeftPoints").each(function() {
-          return this.text(++this.points + " Points");
-        });
-      }
-      if (this.x < 10) {
-        this.x = 300;
-        Crafty("RightPoints").each(function() {
-          return this.text(++this.points + " Points");
-        });
-      }
-      this.x += this.dX;
-      return this.y += this.dY;
-    }).onHit('Paddle', function() {
-      return this.dX *= -1;
-    });
-    Crafty.e("LeftPoints, DOM, 2D, Text").attr({
-      x: 20,
-      y: 20,
-      w: 100,
-      h: 20,
-      points: 0
-    }).text("0 Points");
-    return Crafty.e("RightPoints, DOM, 2D, Text").attr({
-      x: 515,
-      y: 20,
-      w: 100,
-      h: 20,
-      points: 0
-    }).text("0 Points");
+      Crafty.c("LeftControls", {
+        init: function() {
+          return this.requires("Multiway");
+        },
+        leftControls: function(speed) {
+          this.multiway(speed, {
+            W: -90,
+            S: 90,
+            D: 0,
+            A: 180
+          });
+          return this;
+        }
+      });
+      Crafty.c("MultiwayAnim", {
+        init: function() {
+          this.bind("NewDirection", function(direction) {
+            if (direction.x < 0) {
+              if (!this.isPlaying("walk_left")) {
+                this.stop().animate("walk_left", 10, -1);
+              }
+            }
+            if (direction.x > 0) {
+              if (!this.isPlaying("walk_right")) {
+                this.stop().animate("walk_right", 10, -1);
+              }
+            }
+            if (direction.y < 0) {
+              if (!this.isPlaying("walk_up")) {
+                this.stop().animate("walk_up", 10, -1);
+              }
+            }
+            if (direction.y > 0) {
+              if (!this.isPlaying("walk_down")) {
+                this.stop().animate("walk_down", 10, -1);
+              }
+            }
+            if (!direction.x && !direction.y) {
+              return this.stop();
+            }
+          });
+          return this;
+        }
+      });
+      Crafty.c("Hero", {
+        Hero: function() {
+          this.requires("SpriteAnimation, Collision, Animate, MultiwayAnim").animate("walk_left", 6, 3, 8).animate("walk_right", 9, 3, 11).animate("walk_up", 3, 3, 5).animate("walk_down", 0, 3, 2);
+          return this;
+        }
+      });
+      return player1 = Crafty.e("2D, Canvas, Hero, player, BombDropper, LeftControls").attr({
+        x: 16,
+        y: 32,
+        z: 1000
+      }).leftControls(1).Hero();
+    };
+    isEdgeTile = function(x, y) {
+      return x === 0 || x === (WIDTH - 1) || y === 0 || y === (HEIGHT - 1);
+    };
+    return Crafty.scene("main");
   };
 
 }).call(this);
