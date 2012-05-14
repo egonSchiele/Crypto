@@ -38,7 +38,7 @@
               z: 2
             });
           } else if (rand(0, 5) > 3) {
-            f = Crafty.e("2D, Canvas, flower, solid, SpriteAnimation, explodable").attr({
+            f = Crafty.e("2D, Canvas, flower, SpriteAnimation, explodable").attr({
               x: i * TILESIZE,
               y: j * TILESIZE,
               z: 1000
@@ -50,15 +50,15 @@
       }
       Crafty.c("Hero", {
         Hero: function() {
-          this.requires("SpriteAnimation, Collision, Animate, MultiwayAnim").animate("walk_left", 6, 3, 8).animate("walk_right", 9, 3, 11).animate("walk_up", 3, 3, 5).animate("walk_down", 0, 3, 2);
+          this.requires("SpriteAnimation, Collision, Animate, MultiwayAnim, HitSolids").animate("walk_left", 6, 3, 8).animate("walk_right", 9, 3, 11).animate("walk_up", 3, 3, 5).animate("walk_down", 0, 3, 2);
           return this;
         }
       });
-      return player1 = Crafty.e("2D, Canvas, Hero, player, BombDropper, LeftControls").attr({
+      return player1 = Crafty.e("2D, Canvas, Hero, player, BombDropper, RightControls, LeftControls").attr({
         x: 16,
         y: 32,
         z: 1000
-      }).leftControls(1).Hero();
+      }).leftControls(1).rightControls(1).Hero();
     };
     isEdgeTile = function(x, y) {
       return x === 0 || x === (WIDTH - 1) || y === 0 || y === (HEIGHT - 1);

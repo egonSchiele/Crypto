@@ -27,3 +27,16 @@ Crafty.c "LeftControls", {
     @
 }
 
+Crafty.c "HitSolids", {
+  init: -> @bind("Moved", (from) ->
+    if @hit("solid") then @attr(x: from.x, y: from.y))
+}
+
+Crafty.c "RightControls", {
+  init: ->
+    @requires("Multiway") 
+  rightControls: (speed) ->
+    @multiway(speed, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180})
+    @
+}
+

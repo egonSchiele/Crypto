@@ -31,13 +31,13 @@ window.onload = ->
           Crafty.e("2D, Canvas, solid, bush" + rand(1, 2)).attr(x: i * TILESIZE, y: j * TILESIZE, z: 2)
         else if rand(0, 5) > 3
           # flowers
-          f = Crafty.e("2D, Canvas, flower, solid, SpriteAnimation, explodable")
+          f = Crafty.e("2D, Canvas, flower, SpriteAnimation, explodable")
                   .attr(x: i * TILESIZE, y: j * TILESIZE, z: 1000)
                   .bind('explode', -> @destroy())
  
     Crafty.c "Hero", {
       Hero: ->
-        @requires("SpriteAnimation, Collision, Animate, MultiwayAnim")
+        @requires("SpriteAnimation, Collision, Animate, MultiwayAnim, HitSolids")
           .animate("walk_left", 6, 3, 8)
           .animate("walk_right", 9, 3, 11)
           .animate("walk_up", 3, 3, 5)
@@ -46,9 +46,10 @@ window.onload = ->
     }
 
 
-    player1 = Crafty.e("2D, Canvas, Hero, player, BombDropper, LeftControls")
+    player1 = Crafty.e("2D, Canvas, Hero, player, BombDropper, RightControls, LeftControls")
         .attr(x: 16, y: 32, z: 1000)
         .leftControls(1)
+        .rightControls(1)
         .Hero()
 
   isEdgeTile = (x, y) -> x is 0 or x is (WIDTH - 1) or y is 0 or y is (HEIGHT - 1)
